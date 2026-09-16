@@ -24,14 +24,12 @@ services:
           envVarKey: MYSQL_PASSWORD
       - key: ENCRYPTION_KEY_PATH
         value: /var/www/encryption_keys/freeitsm.key
-    # Single disk mounted high enough in the tree to cover every volume the
-    # original docker-compose.yml defined (tickets/attachments,
-    # change-management/attachments, encryption_keys, uploads, recordings,
-    # lms/content, rfp-builder/uploads, branding uploads, war-room/attachments)
+    # Mounted only here (not /var/www) so the disk doesn't mask the app
+    # code baked into the image at /var/www/html on first mount.
     disk:
       name: freeitsm-data
-      mountPath: /var/www
-      sizeGB: 10
+      mountPath: /var/www/encryption_keys
+      sizeGB: 1
 
   # MySQL as a private service (Render has no managed MySQL offering)
   - type: pserv
