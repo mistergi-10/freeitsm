@@ -29,7 +29,7 @@ services:
     disk:
       name: freeitsm-data
       mountPath: /var/www/encryption_keys
-      sizeGB: 1
+      sizeGB: 10
 
   # MySQL as a private service (Render has no managed MySQL offering)
   - type: pserv
