@@ -10,7 +10,6 @@ services:
     # Redirect every path that needs to persist onto the single mounted
     # disk at /data via symlinks, then hand off to the image's normal CMD.
     dockerCommand: >-
-      sh -c "
       mkdir -p /data/encryption_keys /data/tickets-attachments /data/change-management-attachments /data/uploads /data/recordings /data/lms-content /data/contracts-rfp-builder-uploads /data/system-uploads-branding /data/war-room-attachments &&
       chown -R www-data:www-data /data &&
       mkdir -p /var/www/html/tickets /var/www/html/change-management /var/www/html/lms /var/www/html/contracts/rfp-builder /var/www/html/system/uploads /var/www/html/war-room &&
@@ -25,7 +24,6 @@ services:
       ln -s /data/system-uploads-branding /var/www/html/system/uploads/branding &&
       ln -s /data/war-room-attachments /var/www/html/war-room/attachments &&
       exec apache2-foreground
-      "
     envVars:
       - key: DB_SERVER
         fromService:
