@@ -1,0 +1,53 @@
+services:
+  # FreeITSM app - pulls the prebuilt image (fast, no build step)
+  - type: web
+    name: freeitsm
+    runtime: image
+    plan: starter
+    region: oregon
+    image:
+      url: ghcr.io/edmozley/freeitsm:latest
+    envVars:
+      - key: DB_SERVER
+        fromService:
+          name: freeitsm-db
+          type: pserv
+          property: host
+      - key: DB_NAME
+        value: freeitsm
+      - key: DB_USERNAME
+        value: freeitsm
+      - key: DB_PASSWORD
+        sync: false
+      - key: ENCRYPTION_KEY_PATH
+        value: /var/www/encryption_keys/freeitsm.key
+    # Single disk mounted high enough in the tree to cover every volume the
+    # original docker-compose.yml defined (tickets/attachments,
+    # change-management/attachments, encryption_keys, uploads, recordings,
+    # lms/content, rfp-builder/uploads, branding uploads, war-room/attachments)
+    disk:
+      name: freeitsm-data
+      mountPath: /var/www
+      sizeGB: 10
+
+  # MySQL as a private service (Render has no managed MySQL offering)
+  - type: pserv
+    name: freeitsm-db
+    runtime: image
+    plan: starter
+    region: oregon
+    image:
+      url: docker.io/library/mysql:8.0
+    envVars:
+      - key: MYSQL_DATABASE
+        value: freeitsm
+      - key: MYSQL_USER
+        value: freeitsm
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+    disk:
+      name: freeitsm-db-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10

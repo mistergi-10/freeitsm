@@ -1,0 +1,53 @@
+services:
+  app:
+    image: ghcr.io/edmozley/freeitsm:latest
+    ports:
+      - "8080:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_SERVER=db
+      - DB_NAME=freeitsm
+      - DB_USERNAME=freeitsm
+      - DB_PASSWORD=freeitsm
+      - ENCRYPTION_KEY_PATH=/var/www/encryption_keys/freeitsm.key
+    volumes:
+      - attachments:/var/www/html/tickets/attachments
+      - cm-attachments:/var/www/html/change-management/attachments
+      - encryption-keys:/var/www/encryption_keys
+      - uploads:/var/www/html/uploads
+      - recordings:/var/www/html/recordings
+      - lms-content:/var/www/html/lms/content
+      - rfp-builder-uploads:/var/www/html/contracts/rfp-builder/uploads
+      - branding-uploads:/var/www/html/system/uploads/branding
+      - war-room-attachments:/var/www/html/war-room/attachments
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: freeitsm
+      MYSQL_USER: freeitsm
+      MYSQL_PASSWORD: freeitsm
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db-data:
+  attachments:
+  cm-attachments:
+  encryption-keys:
+  uploads:
+  recordings:
+  lms-content:
+  rfp-builder-uploads:
+  branding-uploads:
+  war-room-attachments:
