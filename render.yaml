@@ -18,7 +18,10 @@ services:
       - key: DB_USERNAME
         value: freeitsm
       - key: DB_PASSWORD
-        sync: false
+        fromService:
+          name: freeitsm-db
+          type: pserv
+          envVarKey: MYSQL_PASSWORD
       - key: ENCRYPTION_KEY_PATH
         value: /var/www/encryption_keys/freeitsm.key
     # Single disk mounted high enough in the tree to cover every volume the
@@ -44,7 +47,7 @@ services:
       - key: MYSQL_USER
         value: freeitsm
       - key: MYSQL_PASSWORD
-        sync: false
+        generateValue: true
       - key: MYSQL_ROOT_PASSWORD
         generateValue: true
     disk:
